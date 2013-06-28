@@ -1,0 +1,33 @@
+#wrapx{
+	width: 610px;
+	height: 610px;
+	margin-left: 50%;
+	position:relative;
+	left: -305px;
+}
+
+#wrap{
+	width: 600px;
+	height: 600px;
+	overflow: hidden;
+	padding: 8px 8px;
+	border-style: solid;
+	border-width: 2px;
+	border-color: #29241e;
+}
+
+.boxx{
+	width: 38px;
+	height: 38px;
+	border-style: solid;
+	border-width: 1px;
+	border-color: #29241e;
+	float: left;
+}
+
+body{
+	background-color: gray;
+	background-image: url(img/qipan.png);
+	background-repeat: repeat-x repeat-y;
+	text-align: center;
+}
