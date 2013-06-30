@@ -19,11 +19,16 @@ def play():
   user_pos = int(request.args.get('id',''))
   if user_pos not in white and user_pos not in black:
     white.append(user_pos)
-    AI_pos = AI.play(white, black)
-    black.append(AI_pos)
+    AI_pos = AI.play(black, white)
+    if AI_pos < 0:
+      black.append(-AI_pos-1)
+    else:
+      black.append(AI_pos)
+    print 'B: ', black
+    print 'W: ', white
     return str(AI_pos)
   else:
-    return '-1'
+    return '-1024'
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", debug=True)

@@ -25,7 +25,7 @@ for i in range(L / 2 + 1):
 
 # define the "board situation" = Black_score - White_score
 
-def H(black, white, pos):
+def H(black, white):
   global max_grid_cnt, max_score
 
   visited = [ [False for i in range(4)] for j in range(L*L) ]
@@ -163,7 +163,7 @@ def H(black, white, pos):
       return 0
     return contin_cnt * min(10, left_empty + contin_cnt + right_empty)
 
-  """
+
   def get_score(chess_list, is_Black):
     score = 0
     for pos in chess_list:
@@ -176,24 +176,18 @@ def H(black, white, pos):
   
   black_score = get_score(black, True)
   white_score = get_score(white, False)
-  """
-  black_score = 0
-  white_score = 0
-  for i in range(4):
-    black_score += search(pos, i, True)
-    white_score += search(pos, i, False)
   if white_score >= BETA * 0.75:
     return -white_score
   return black_score - white_score
 
-def dfs(black, white, pos, score, depth, ancestor_value):
+def dfs(black, white, depth, ancestor_value):
   global max_depth, ALPHA, BETA
   ############
   'alpha-beta cutting'
   ############
 
   if depth >= max_depth:
-    return (-1, H(black, white, pos))
+    return (-1, H(black, white))
 
   elif depth % 2 == 0:
     # AI play. max-level
@@ -201,10 +195,9 @@ def dfs(black, white, pos, score, depth, ancestor_value):
     alpha = ALPHA # very very small
     for i in priority_seq:
       if i not in black and i not in white:
-        tem_black = black + [i]
-        (pos, tem_score) = dfs(tem_black, white, i, H(tem_black, white, i), depth + 1, alpha)
-        if score + tem_score > alpha:
-          alpha = score + tem_score
+        (pos, score) = dfs(black + [i], white, depth + 1, alpha)
+        if score > alpha:
+          alpha = score
           choice = i
           if alpha >= ancestor_value:
             break
@@ -216,21 +209,22 @@ def dfs(black, white, pos, score, depth, ancestor_value):
     beta = BETA # very very big
     for i in priority_seq:
       if i not in black and i not in white:
-        tem_white = white + [i]
-        (pos, tem_score) = dfs( black, tem_white, i, H(black, tem_white, i), depth + 1, beta)
-        if score + tem_score < beta:
-          beta = score + tem_score
+        (pos, score) = dfs( black, white + [i], depth + 1, beta)
+        if score < beta:
+          beta = score
           choice = i
           if (beta <= ancestor_value):
             break
     return (choice, beta) 
 
 
-def play(white, black):
+def play(black, white):
   # return the position AI place black chess.
   global AI_win, USER_win
   global max_depth
   # check if the USER win.
+  USER_win = False
+  H(black, white)
   if USER_win:
     return -2333
   ############################################
@@ -239,9 +233,11 @@ def play(white, black):
   elif len(white) + len(black) >= 10:
     max_depth = 3
   ############################################
-  (pos, score) = dfs(white, black, -1, 0, 0, BETA) 
+  (pos, score) = dfs(white, black, 0, BETA) 
 
   # check if the AI win.
+  AI_win = False
+  H(black + [pos], white)
   if AI_win:
     return -(pos+1)
   return pos
